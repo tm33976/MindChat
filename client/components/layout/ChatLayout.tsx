@@ -11,7 +11,7 @@ interface Props {
 
 export default function ChatLayout({ children, activeChatId }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { chats, loading, createChat, deleteChat, updateChatTitle, bumpChatToTop } = useChats();
+  const { chats, loading, error, createChat, deleteChat, updateChatTitle, bumpChatToTop } = useChats();
 
   return (
     <div style={{
@@ -29,6 +29,7 @@ export default function ChatLayout({ children, activeChatId }: Props) {
         chats={chats}
         loading={loading}
         activeChatId={activeChatId}
+        error={error}
         onNewChat={createChat}
         onDeleteChat={deleteChat}
         isOpen={sidebarOpen}

@@ -8,6 +8,7 @@ import { MindChatLogo } from '@/components/layout/ChatLayout';
 interface Props {
   chats: Chat[];
   loading: boolean;
+  error?: string | null;
   activeChatId?: string;
   onNewChat: () => Promise<Chat | null>;
   onDeleteChat: (id: string) => Promise<boolean>;
@@ -15,7 +16,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function Sidebar({ chats, loading, activeChatId, onNewChat, onDeleteChat, isOpen, onClose }: Props) {
+export default function Sidebar({ chats, loading, error, activeChatId, onNewChat, onDeleteChat, isOpen, onClose }: Props) {
   const router = useRouter();
 
   const handleNewChat = async () => {

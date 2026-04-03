@@ -12,18 +12,18 @@ export function useChats() {
   const fetchChats = useCallback(async () => {
     try {
       setError(null);
-      const data = await chatApi.getAll();
+      const data = await chatApi.getAll(); // already has retry built in
       setChats(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load chats');
+      const msg = err instanceof Error ? err.message : 'Failed to load chats';
+      setError(msg);
+      console.error('useChats fetch failed:', msg);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchChats();
-  }, [fetchChats]);
+  useEffect(() => { fetchChats(); }, [fetchChats]);
 
   const createChat = useCallback(async (title?: string): Promise<Chat | null> => {
     try {
@@ -37,14 +37,12 @@ export function useChats() {
   }, []);
 
   const deleteChat = useCallback(async (id: string): Promise<boolean> => {
-    // Optimistic update
     setChats((prev) => prev.filter((c) => c._id !== id));
     try {
       await chatApi.delete(id);
       return true;
     } catch (err) {
-      // Rollback on failure
-      await fetchChats();
+      await fetchChats(); // rollback
       setError(err instanceof Error ? err.message : 'Failed to delete chat');
       return false;
     }
