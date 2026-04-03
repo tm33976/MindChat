@@ -1,12 +1,14 @@
-'use client';
+﻿'use client';
 
-import { useState } from 'react';
+import { CSSProperties, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Message } from '@/types';
 import { formatMessageTime } from '@/lib/utils';
+
+const codeTheme = oneDark as { [key: string]: CSSProperties };
 
 export default function MessageBubble({ message }: { message: Message }) {
   const [copied, setCopied] = useState(false);
@@ -75,7 +77,7 @@ export default function MessageBubble({ message }: { message: Message }) {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  code({ node, className, children, ...props }) {
+                  code({ className, children, style: inlineStyle, ...props }) {
                     const match = /language-(\w+)/.exec(className ?? '');
                     const inline = !match;
                     return !inline ? (
@@ -90,14 +92,17 @@ export default function MessageBubble({ message }: { message: Message }) {
                           <span>{match[1]}</span>
                           <CopyCodeButton code={String(children)} />
                         </div>
-                        <SyntaxHighlighter style={oneDark} language={match[1]} PreTag="div"
+                        <SyntaxHighlighter
+                          style={codeTheme}
+                          language={match[1]}
+                          PreTag="div"
                           customStyle={{ margin: 0, padding: '14px 16px', background: 'transparent', fontSize: '0.82rem' }}
-                          {...props}>
+                        >
                           {String(children).replace(/\n$/, '')}
                         </SyntaxHighlighter>
                       </div>
                     ) : (
-                      <code className={className} {...props}>{children}</code>
+                      <code className={className} style={inlineStyle} {...props}>{children}</code>
                     );
                   },
                 }}
@@ -137,7 +142,12 @@ export default function MessageBubble({ message }: { message: Message }) {
 
 function CopyCodeButton({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
-  const handleCopy = async () => { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <button onClick={handleCopy} style={{
       background: 'none', border: 'none', cursor: 'pointer',
