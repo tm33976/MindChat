@@ -1,13 +1,13 @@
-import mongoose, { Document, Schema } from 'mongoose';
+﻿import { Schema, Types, model } from 'mongoose';
 
-export interface ITask extends Document {
-  _id: mongoose.Types.ObjectId;
-  chatId: mongoose.Types.ObjectId;
+export interface ITask {
+  chatId: Types.ObjectId;
   text: string;
   completed: boolean;
   completedAt?: Date;
   order: number;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const TaskSchema = new Schema<ITask>(
@@ -40,8 +40,8 @@ const TaskSchema = new Schema<ITask>(
   { timestamps: true }
 );
 
-// Prevent exact duplicate tasks in same chat
+// Prevent exact duplicate tasks in the same chat.
 TaskSchema.index({ chatId: 1, text: 1 }, { unique: true });
 TaskSchema.index({ chatId: 1, order: 1 });
 
-export default mongoose.model<ITask>('Task', TaskSchema);
+export default model<ITask>('Task', TaskSchema);

@@ -1,10 +1,9 @@
-import mongoose, { Document, Schema } from 'mongoose';
+﻿import { Schema, Types, model } from 'mongoose';
 
 export type MessageRole = 'user' | 'assistant';
 
-export interface IMessage extends Document {
-  _id: mongoose.Types.ObjectId;
-  chatId: mongoose.Types.ObjectId;
+export interface IMessage {
+  chatId: Types.ObjectId;
   role: MessageRole;
   content: string;
   timestamp: Date;
@@ -26,7 +25,7 @@ const MessageSchema = new Schema<IMessage>(
     content: {
       type: String,
       required: true,
-      // No maxlength here — we handle context window on the service layer
+      // No maxlength here - we handle context window on the service layer.
     },
     timestamp: {
       type: Date,
@@ -39,7 +38,7 @@ const MessageSchema = new Schema<IMessage>(
   }
 );
 
-// Compound index: fast retrieval of all messages in a chat, sorted chronologically
+// Compound index for fast chronological retrieval within a chat.
 MessageSchema.index({ chatId: 1, timestamp: 1 });
 
-export default mongoose.model<IMessage>('Message', MessageSchema);
+export default model<IMessage>('Message', MessageSchema);

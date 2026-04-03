@@ -1,11 +1,11 @@
-import mongoose, { Document, Schema } from 'mongoose';
+﻿import { Schema, Types, model } from 'mongoose';
 
-export interface IGoal extends Document {
-  _id: mongoose.Types.ObjectId;
-  chatId: mongoose.Types.ObjectId;
+export interface IGoal {
+  chatId: Types.ObjectId;
   goal: string;
   timeline: string;
   detectedAt: Date;
+  createdAt: Date;
   updatedAt: Date;
 }
 
@@ -15,7 +15,7 @@ const GoalSchema = new Schema<IGoal>(
       type: Schema.Types.ObjectId,
       ref: 'Chat',
       required: true,
-      unique: true, //We have one active goal per chat
+      unique: true, // We have one active goal per chat
       index: true,
     },
     goal: {
@@ -38,4 +38,4 @@ const GoalSchema = new Schema<IGoal>(
   { timestamps: true }
 );
 
-export default mongoose.model<IGoal>('Goal', GoalSchema);
+export default model<IGoal>('Goal', GoalSchema);
