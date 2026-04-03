@@ -14,6 +14,7 @@ export default function MessageBubble({ message }: { message: Message }) {
   const [copied, setCopied] = useState(false);
   const isUser = message.role === 'user';
 
+  
   const handleCopy = async () => {
     await navigator.clipboard.writeText(message.content);
     setCopied(true);
