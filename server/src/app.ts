@@ -16,15 +16,17 @@ app.use(helmet());
 
 //CORS 
 const allowedOrigins = [
-  process.env.CLIENT_URL ?? 'http://localhost:3000',
+  process.env.CLIENT_URL,
   'http://localhost:3000',
-];
+].filter(Boolean) as string[];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. Postman, server-to-server)
       if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else if (origin.match(/https:\/\/mind-chat-.*\.vercel\.app$/)) {
+        // covers all preview deployments too
         callback(null, true);
       } else {
         callback(new Error(`CORS: Origin ${origin} not allowed`));
